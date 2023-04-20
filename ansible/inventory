@@ -1,0 +1,5 @@
+[sgt]
+GROUP3_ANSIBLE ansible_host=16.16.92.250
+
+[sgt:vars]
+ansible_user=ubuntu
