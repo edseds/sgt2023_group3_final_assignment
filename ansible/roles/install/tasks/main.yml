@@ -14,6 +14,41 @@
     repo: https://github.com/staniulytepaulina/sgt2023_group3_final_assignment.git
     dest: /Desktop/sgt2023_group3_final_assignment/ansible
 
+- name: "install python3-pip"
+  apt:
+      name: python3-pip
+      state: latest
+      update_cache: true
+
+- name: "install Docker SDK for Python"
+  pip:
+        name: docker
+        state: present
+
+- name: "start MySQL container"
+  docker_container:
+        name: mysql
+        image: mysql:latest
+        ports:
+          - "3306:3306"
+        environment:
+          MYSQL_ROOT_PASSWORD: ICanDoIt!
+
+- name: "start Python container"
+  docker_container:
+        name: python_app
+        image: my_python_app
+        ports:
+          - "8000:8000"
+        volumes:
+          - /path/to/app:/app
+        environment:
+          DB_HOST: sgt
+          DB_USER: root
+          DB_PASSWORD: ICanDoIt!
+
+
+
 
 
 
