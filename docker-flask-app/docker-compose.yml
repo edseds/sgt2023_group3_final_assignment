@@ -6,7 +6,7 @@ services:
     container_name: mysql
     restart: unless-stopped
     environment:
-      #MYSQL_DATABASE: people
+      MYSQL_DATABASE: people
       MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: ICanDoIt!
       MYSQL_ROOT_HOST: localhost
@@ -14,7 +14,7 @@ services:
     ports:
       - '3307:3306'
     volumes:
-      - ./db:/docker-entrypoint-initdb.d/:ro
+      - mysql-data:/var/lib/mysql
     networks:
       mysql-network:
         aliases:
