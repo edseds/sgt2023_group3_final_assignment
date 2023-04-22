@@ -1,0 +1,25 @@
+- name: "run apt update"
+  apt:
+    name: '*'
+    state: latest
+
+- name: "install docker"
+  package:
+    name: docker
+    state: present
+    update_cache: yes
+
+- name: "clone repository"
+  git:
+    repo: https://github.com/staniulytepaulina/sgt2023_group3_final_assignment.git
+    dest: /Desktop/sgt2023_group3_final_assignment/ansible
+
+
+
+
+
+
+
+
+
+
