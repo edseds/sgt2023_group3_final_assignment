@@ -39,5 +39,5 @@ variable "inventory_filename" {
 
 variable "security_group_name" {
   description = "The name of the security group"
-  default = "team3_security_group"
+  default = "team3_security_group_test"
 }

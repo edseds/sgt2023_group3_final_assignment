@@ -1,4 +1,4 @@
 
-key_name  = "keypair_group3"
-public_key_path = "/home/sgtuser/zandakey.pub"
-private_key_path = "/home/stgtuser/zandakey"
+key_name  = "keypair_group3_test"
+public_key_path = "/home/sgtuser/amandakey.pub"
+private_key_path = "/home/sgtuser/amandakey"

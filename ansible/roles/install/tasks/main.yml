@@ -1,23 +1,42 @@
-
-
-
 - name: "run apt update"
   apt:
     name: '*'
     state: latest
 
-
-- name: Install Docker on the instance
+- name: Install required system packages
   apt:
-    name:
-        - docker.io
-        - docker-compose
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
+    update_cache: true
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
     state: present
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: true
+  
 
 - name: "clone repository"
   git:
     repo: https://github.com/staniulytepaulina/sgt2023_group3_final_assignment.git
-    dest: /Desktop/sgt2023_group3_final_assignment/ansible
+    dest: /home/ubuntu/sgt2023_group3_final_assignment
 
 - name: "install python3-pip"
   apt:
@@ -30,10 +49,17 @@
         name: docker
         state: present
 
+#- name: Run Docker Compose in a specific directory
+ # command: docker-compose up -d
+  #args:
+   # chdir: /home/ubuntu/sgt2023_group3_final_assignment/docker-flask-app/db
+  #become: true
+  #become_user: root
+
 - name: Run MySQL container
   docker_container:
       name: mysql
-      image: mysql
+      image: mysql:latest
       env:
         MYSQL_ROOT_PASSWORD: ICanDoIt!
       ports:
@@ -48,30 +74,33 @@
       ports:
         - "8000:8000"
       volumes:
-        - "/Desktop/sgt2023_group3_final_assignment/ansible"
+        - "/home/ubuntu/sgt2023_group3_final_assignment"
+
 
 - name: Download Docker Compose
   get_url:
-    url: "https://github.com/staniulytepaulina/sgt2023_group3_final_assignment/blob/docker/docker-flask-app/docker-compose.yml"
+    url: "https://github.com/staniulytepaulina/sgt2023_group3_final_assignment/blob/main/docker-flask-app/docker-compose.yml"
     dest: "/usr/local/bin/docker-compose"
     mode: '0755'
   vars:
     docker_compose_version: '3'
 
-- name: "Restore MySQL DB from dump"
-  get_url:
-    url: "https://github.com/staniulytepaulina/sgt2023_group3_final_assignment/blob/docker/people_db_backup.sql"
-    dest: "/Desktop/sgt2023_group3_final_assignment/ansible"
-    validate_certs: no
-  register: download_result
+#- name: Wait for MySQL container to become ready
+#  wait_for:
+#    host: "localhost"
+#    port: 3307
+#    delay: 20
+#    timeout: 120
+
 
 - name: Copy MySQL dump to container
-  shell: docker cp /path/to/people_db_backup.sql mysql:/tmp/people_db_backup.sql
-  when: download_result.changed == true
+  shell: docker cp "/home/ubuntu/sgt2023_group3_final_assignment/people_db_backup.sql" "mysql:/var/lib/mysql"
 
-- name: Load MySQL dump
-  shell: docker exec mysql sh -c 'mysql -uroot -p"ICanDoIt!" mysql' < /tmp/people_db_backup.sql
-  when: download_result.changed == true
+
+- name: Import people_db_backup.sql into MySQL container
+  shell: docker exec -i "mysql" bash -c 'cat /var/lib/mysql | mysql -u root -pICanDoIt! db'
+  args:
+    executable: /bin/bash
 
 - name: Delete downloaded repository information
   file:
