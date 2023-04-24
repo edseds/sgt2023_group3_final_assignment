@@ -1,13 +1,18 @@
+
+
+
 - name: "run apt update"
   apt:
     name: '*'
     state: latest
 
-- name: "install docker"
-  package:
-    name: docker
+
+- name: Install Docker on the instance
+  apt:
+    name:
+        - docker.io
+        - docker-compose
     state: present
-    update_cache: yes
 
 - name: "clone repository"
   git:
@@ -25,27 +30,53 @@
         name: docker
         state: present
 
-- name: "start MySQL container"
+- name: Run MySQL container
   docker_container:
-        name: mysql
-        image: mysql:latest
-        ports:
-          - "3306:3306"
-        environment:
-          MYSQL_ROOT_PASSWORD: ICanDoIt!
+      name: mysql
+      image: mysql
+      env:
+        MYSQL_ROOT_PASSWORD: ICanDoIt!
+      ports:
+        - "3307:3306"
 
-- name: "start Python container"
+- name: Run Python app container
   docker_container:
-        name: python_app
-        image: my_python_app
-        ports:
-          - "8000:8000"
-        volumes:
-          - /path/to/app:/app
-        environment:
-          DB_HOST: sgt
-          DB_USER: root
-          DB_PASSWORD: ICanDoIt!
+      name: mysql
+      image: mysql:latest
+      env:
+        MYSQL_DATABASE_URL: mysql://root:ICanDoIt!@localhost/people
+      ports:
+        - "8000:8000"
+      volumes:
+        - "/Desktop/sgt2023_group3_final_assignment/ansible"
+
+- name: Download Docker Compose
+  get_url:
+    url: "https://github.com/staniulytepaulina/sgt2023_group3_final_assignment/blob/docker/docker-flask-app/docker-compose.yml"
+    dest: "/usr/local/bin/docker-compose"
+    mode: '0755'
+  vars:
+    docker_compose_version: '3'
+
+- name: "Restore MySQL DB from dump"
+  get_url:
+    url: "https://github.com/staniulytepaulina/sgt2023_group3_final_assignment/blob/docker/people_db_backup.sql"
+    dest: "/Desktop/sgt2023_group3_final_assignment/ansible"
+    validate_certs: no
+  register: download_result
+
+- name: Copy MySQL dump to container
+  shell: docker cp /path/to/people_db_backup.sql mysql:/tmp/people_db_backup.sql
+  when: download_result.changed == true
+
+- name: Load MySQL dump
+  shell: docker exec mysql sh -c 'mysql -uroot -p"ICanDoIt!" mysql' < /tmp/people_db_backup.sql
+  when: download_result.changed == true
+
+- name: Delete downloaded repository information
+  file:
+        path: /opt/myapp
+        state: absent
 
 
 
