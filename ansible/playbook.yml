@@ -1,0 +1,11 @@
+---
+- hosts: sgt
+  become: true
+  roles:
+    - install
+
+
+
+
+
+

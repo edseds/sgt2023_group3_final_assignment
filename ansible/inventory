@@ -1,0 +1,5 @@
+[sgt]
+group3_final_assignment ansible_host=16.16.99.197
+
+[sgt:vars]
+ansible_user=ubuntu

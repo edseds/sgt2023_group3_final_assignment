@@ -1,0 +1,91 @@
+
+
+
+- name: "run apt update"
+  apt:
+    name: '*'
+    state: latest
+
+
+- name: Install Docker on the instance
+  apt:
+    name:
+        - docker.io
+        - docker-compose
+    state: present
+
+- name: "clone repository"
+  git:
+    repo: https://github.com/staniulytepaulina/sgt2023_group3_final_assignment.git
+    dest: /Desktop/sgt2023_group3_final_assignment/ansible
+
+- name: "install python3-pip"
+  apt:
+      name: python3-pip
+      state: latest
+      update_cache: true
+
+- name: "install Docker SDK for Python"
+  pip:
+        name: docker
+        state: present
+
+- name: Run MySQL container
+  docker_container:
+      name: mysql
+      image: mysql
+      env:
+        MYSQL_ROOT_PASSWORD: ICanDoIt!
+      ports:
+        - "3307:3306"
+
+- name: Run Python app container
+  docker_container:
+      name: mysql
+      image: mysql:latest
+      env:
+        MYSQL_DATABASE_URL: mysql://root:ICanDoIt!@localhost/people
+      ports:
+        - "8000:8000"
+      volumes:
+        - "/Desktop/sgt2023_group3_final_assignment/ansible"
+
+- name: Download Docker Compose
+  get_url:
+    url: "https://github.com/staniulytepaulina/sgt2023_group3_final_assignment/blob/docker/docker-flask-app/docker-compose.yml"
+    dest: "/usr/local/bin/docker-compose"
+    mode: '0755'
+  vars:
+    docker_compose_version: '3'
+
+- name: "Restore MySQL DB from dump"
+  get_url:
+    url: "https://github.com/staniulytepaulina/sgt2023_group3_final_assignment/blob/docker/people_db_backup.sql"
+    dest: "/Desktop/sgt2023_group3_final_assignment/ansible"
+    validate_certs: no
+  register: download_result
+
+- name: Copy MySQL dump to container
+  shell: docker cp /path/to/people_db_backup.sql mysql:/tmp/people_db_backup.sql
+  when: download_result.changed == true
+
+- name: Load MySQL dump
+  shell: docker exec mysql sh -c 'mysql -uroot -p"ICanDoIt!" mysql' < /tmp/people_db_backup.sql
+  when: download_result.changed == true
+
+- name: Delete downloaded repository information
+  file:
+        path: /opt/myapp
+        state: absent
+
+
+
+
+
+
+
+
+
+
+
+
