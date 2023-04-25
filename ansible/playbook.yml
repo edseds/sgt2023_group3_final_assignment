@@ -1,8 +1,11 @@
 ---
-- hosts: sgt
+- hosts: all
   become: true
   roles:
     - install
+    - git
+    - db
+    - delete
 
 
 
