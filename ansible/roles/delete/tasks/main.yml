@@ -1,0 +1,4 @@
+- name: Delete downloaded repository information
+  file:
+    path: /opt/myapp
+    state: absent
