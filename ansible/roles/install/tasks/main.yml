@@ -33,11 +33,6 @@
     update_cache: true
   
 
-- name: "clone repository"
-  git:
-    repo: https://github.com/staniulytepaulina/sgt2023_group3_final_assignment.git
-    dest: /home/ubuntu/sgt2023_group3_final_assignment
-
 - name: "install python3-pip"
   apt:
       name: python3-pip
@@ -85,27 +80,9 @@
   vars:
     docker_compose_version: '3'
 
-#- name: Wait for MySQL container to become ready
-#  wait_for:
-#    host: "localhost"
-#    port: 3307
-#    delay: 20
-#    timeout: 120
 
 
-- name: Copy MySQL dump to container
-  shell: docker cp "/home/ubuntu/sgt2023_group3_final_assignment/people_db_backup.sql" "mysql:/var/lib/mysql"
 
-
-- name: Import people_db_backup.sql into MySQL container
-  shell: docker exec -i "mysql" bash -c 'cat /var/lib/mysql | mysql -u root -pICanDoIt! db'
-  args:
-    executable: /bin/bash
-
-- name: Delete downloaded repository information
-  file:
-        path: /opt/myapp
-        state: absent
 
 
 

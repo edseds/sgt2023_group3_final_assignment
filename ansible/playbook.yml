@@ -3,6 +3,9 @@
   become: true
   roles:
     - install
+    - git
+    - db
+    - delete
 
 
 
