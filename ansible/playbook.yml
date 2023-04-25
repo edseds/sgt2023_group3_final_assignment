@@ -2,10 +2,9 @@
 - hosts: all
   become: true
   roles:
-    - install
     - git
+    - install
     - db
-    - delete
 
 
 

@@ -7,10 +7,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: people
-      MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: ICanDoIt!
-      MYSQL_ROOT_HOST: localhost
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
     ports:
       - '3307:3306'
     volumes:
