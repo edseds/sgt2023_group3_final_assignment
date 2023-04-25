@@ -3,7 +3,7 @@ provider "aws" {
   region = var.region
 }
 
-resource "aws_key_pair" "mykeypair_test" {
+resource "aws_key_pair" "group3_key" {
   key_name   = var.key_name
   public_key = file(var.public_key_path)
 }
@@ -36,7 +36,7 @@ resource "aws_security_group" "group3_security_group" {
 resource "aws_instance" "group3_final_assignment" {
   ami           = var.ami_id
   instance_type = var.instance_type
-  key_name      = aws_key_pair.mykeypair_test.key_name
+  key_name      = aws_key_pair.group3_key.key_name
   tags = {
     Name = "group3_final_assignment_test"
   }
