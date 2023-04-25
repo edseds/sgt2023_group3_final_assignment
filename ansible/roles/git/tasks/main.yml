@@ -1,0 +1,4 @@
+- name: "clone repository"
+  git:
+    repo: https://github.com/staniulytepaulina/sgt2023_group3_final_assignment.git
+    dest: /home/ubuntu/sgt2023_group3_final_assignment
