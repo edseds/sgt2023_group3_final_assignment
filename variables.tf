@@ -18,8 +18,6 @@ variable "private_key_path" {
 variable "ami_id" {
   description = "The ID of the AMI to use for the instance."
   default     = "ami-064087b8d355e9051"
-
-
 }
 
 variable "instance_type" {
@@ -39,5 +37,5 @@ variable "inventory_filename" {
 
 variable "security_group_name" {
   description = "The name of the security group"
-  default = "team3_security_group"
+  default = "team3_security_group_test"
 }
